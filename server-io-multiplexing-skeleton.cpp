@@ -256,6 +256,7 @@ int main( int argc, char* argv[] )
 
 
 			// TODO: add connData in your data structure so that you can keep track of that socket.
+			connections.push_back(connData);
 		}
 
 		// TODO: loop through your open sockets.
@@ -264,6 +265,26 @@ int main( int argc, char* argv[] )
 		// 2) If it is in the readfds set, receive data from that socket, using process_client_recv().
 		// 3) If it is in the writefds set, write send to that socket, using process_client_send().
 		// 4) Close and remove sockets if their connection was terminated.
+		for( size_t i = 0; i < connections.size(); ++i )
+		{
+			if(FD_ISSET(connections[i].sock , &readfds)){
+				int retValueRecv;
+				retValueRecv = process_client_recv(connections[i]);
+				// if it's closed
+				if(!retValueRecv){
+					connections.erase(connections.begin()+i);
+				}
+			}
+			if(FD_ISSET(connections[i].sock , &writefds)){
+				int retValueSend;
+				retValueSend = process_client_send(connections[i]);
+				// if it's closed
+				if(!retValueSend){
+					connections.erase(connections.begin()+i);
+				}
+			}
+			
+		}
 
 
 	}
