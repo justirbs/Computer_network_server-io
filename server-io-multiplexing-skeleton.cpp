@@ -272,19 +272,27 @@ int main( int argc, char* argv[] )
 				retValueRecv = process_client_recv(connections[i]);
 				// if it's closed
 				if(!retValueRecv){
-					connections.erase(connections.begin()+i);
+					close(connections[i].sock);
+					connections[i].sock = -1;	
 				}
 			}
-			if(FD_ISSET(connections[i].sock , &writefds)){
+			else if(FD_ISSET(connections[i].sock , &writefds)){
 				int retValueSend;
 				retValueSend = process_client_send(connections[i]);
 				// if it's closed
 				if(!retValueSend){
-					connections.erase(connections.begin()+i);
+					close(connections[i].sock);
+					connections[i].sock = -1;	
 				}
 			}
 			
 		}
+		connections.erase(
+			std::remove_if(
+				connections.begin(), connections.end(), &is_invalid_connection
+			),
+			connections.end()
+		);
 
 
 	}
