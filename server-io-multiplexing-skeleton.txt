@@ -32,7 +32,7 @@
 //--    configurables       ///{{{1///////////////////////////////////////////
 
 // Set VERBOSE to 1 to print additional, non-essential information.
-#define VERBOSE 0
+#define VERBOSE 1
 
 // If NONBLOCKING is set to 1, all sockets are put into non-blocking mode.
 // Use this for Part II, when implementing the select() based server, where
@@ -185,7 +185,8 @@ int main( int argc, char* argv[] )
 		// field of ConnectionData for that socket.
 		for( size_t i = 0; i < connections.size(); ++i )
 		{
-			
+			printf( "Connection %zu: in state %d and has socket %d\n",
+			i, connections[i].state, connections[i].sock );
 			if(connections[i].state == eConnStateReceiving){
 				FD_SET(connections[i].sock , &readfds);
 			} else {
