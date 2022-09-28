@@ -39,7 +39,6 @@
 // no blocking operations other than select() should occur. (If an blocking
 // operation is attempted, a EAGAIN or EWOULDBLOCK error is raised, probably
 // indicating a bug in the code!)
-// NOTE: make sure NONBLOCKING is set to 1 for this lab.
 #define NONBLOCKING 1
 
 // Default port of the server. May be overridden by specifying a different
@@ -157,9 +156,7 @@ int main( int argc, char* argv[] )
 		return 1;
 
 
-	// TODO: declare a data structure that will keep track of one ConnectionData 
-	// struct for each open connection. E.g. you can use a vector (see Appendix E 
-	// on the lab manual).
+	// structure that will keep track of one ConnectionData struct for each open connection
 	std :: vector<ConnectionData> connections;
 
 
@@ -173,16 +170,13 @@ int main( int argc, char* argv[] )
 		FD_ZERO( &writefds );
 
 
-		// TODO: add listenfd to readfds.
-		// NOTE: check for FD_SET() in the man page of select().
+		// add listenfd to readfds.
 		FD_SET(listenfd, &readfds);
 
 		int maxValue = listenfd;
 
-		// TODO: loop through all open connections (which you have stored in data structre, e.g. a vector) 
+		// loop through all open connections (which you have stored in data structre, e.g. a vector) 
 		// and add them in readfds or writefds.
-		// NOTE: How to know if a socket should be added in readfds or writefds? Check the "state"
-		// field of ConnectionData for that socket.
 		for( size_t i = 0; i < connections.size(); ++i )
 		{
 			
@@ -200,9 +194,6 @@ int main( int argc, char* argv[] )
 		
 		
 		// wait for an event using select()
-		// NOTE 1: we only need one call to select() throughout our program.
-		// NOTE 2: pay attention to the first arguement of select. It should be the 
-		// maximum VALUE of all tracked file descriptors + 1.
 		int ret = select( maxValue + 1, &readfds, &writefds, 0, 0 );
 		
 
@@ -213,7 +204,6 @@ int main( int argc, char* argv[] )
 		}
 
 
-		// NOTE: if listenfd is in the readfds set after the return of select(), 
 		// it means we have a new incomming connection, which we need to serve, just as we did in Lab 1.2. 
 		if( FD_ISSET(listenfd, &readfds) )
 		{
@@ -254,11 +244,11 @@ int main( int argc, char* argv[] )
 			connData.state = eConnStateReceiving;
 
 
-			// TODO: add connData in your data structure so that you can keep track of that socket.
+			// add connData in data structure so that you can keep track of that socket.
 			connections.push_back(connData);
 		}
 
-		// TODO: loop through your open sockets.
+		// loop through your open sockets.
 		// For each socket: 
 		// 1) Use FD_ISSET to check if the socket is in the readfds or the writefds set, after the return of select(). 
 		// 2) If it is in the readfds set, receive data from that socket, using process_client_recv().
